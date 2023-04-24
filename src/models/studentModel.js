@@ -33,16 +33,20 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    assignments: {
+      type:[String],
+      default: []
+    }
   },
   { timestamps: true }
 );
 
 // Hashing the password before storing it, using bcrypt
 
-studentSchema.pre("create", async (next)=> {
+studentSchema.pre("save", async function(next) {
     try {
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await hash(this.password, salt);
+        const hashedPassword = await bcrypt.hash(this.password, salt);
         this.password = hashedPassword;
         next();
     } catch (error) {

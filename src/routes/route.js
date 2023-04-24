@@ -1,10 +1,20 @@
-const router = require('express').Router()
-const adminController = require('../controllers/adminController')
-const { uploadQuestion } = require('../controllers/questionsController')
-const validationware = require('../middleware/validationware')
+const router = require("express").Router();
+const {studentRegister, studentLogin,} = require("../controllers/studentController");
+const {teacherRegister, teacherLogin, uploadAssignment,} = require("../controllers/teacherController");
+const { authentication, authorization } = require("../middlewares/auth");
+const {loginValidation, teacherValidation, studentValidation} = require("../validation/validationware")
+//====================================================Student API's=================================================================//
+router.post("/registerStudent",studentValidation, studentRegister);
+router.post("/loginStudent",loginValidation , studentLogin);
 
-router.post('/register',validationware.adminValidation,adminController.adminRegister)
-router.post('/login',validationware.adminValidation,adminController.adminLogin)
-router.post('/uploadQuestion',uploadQuestion)
+//====================================================Teacher API's=================================================================//
+router.post("/registerTeacher",teacherValidation, teacherRegister);
+router.post("/loginTeacher",loginValidation, teacherLogin);
+router.post("/uploadAssignment/:teacherId",authentication, authorization, uploadAssignment);
 
-module.exports = router
+//==================================================================================================================================//
+router.all("/*", async function (req, res) {
+    return res.status(400).send({ status: false, message: "Path is not valid" });
+  });
+
+module.exports = router;

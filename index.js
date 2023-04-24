@@ -1,11 +1,15 @@
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
-const route = require("./src/routes/route");
+const multer  = require("multer");
 const env = require("dotenv");
+env.config();
+
+const app = express();
+const route = require("./src/routes/route");
+
 const errorHandler = require("./src/middlewares/errorHandler")
 
-app.use(errorHandler);
+app.use(multer().any());
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_CONNECTION_STRING)
@@ -13,8 +17,10 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING)
 .catch((err)=> console.log(err));
 
 app.use("/", route);
+app.use(errorHandler);
 
-const port = process.env.PORT || 3000;
+
+const port = 3000;
 app.listen( port, ()=>{
     console.log(`Express app is running on port ${port}`);
 })
