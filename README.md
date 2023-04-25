@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-- [Installation & Usage](#installation & usage)
+- [Installation&Usage](#installation&usage)
 - [Tech-Stacks-Used](#Tech-Stacks-Used)
 
 ## Installation & Usage
