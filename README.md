@@ -2,11 +2,10 @@
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
+- [Installation & Usage](#installation & usage)
 - [Tech-Stacks-Used](#Tech-Stacks-Used)
 
-## Installation
+## Installation & Usage
 
 1. Clone the repository:
 
@@ -28,11 +27,15 @@ __Note__:- .env file is already included for testing purposes, so setting the en
 
 
 4. Start the server:
+
     npm start
 
 
+5. Use a tool like Postman to test the API's
 
-##Tech-Stacks-Used
+
+
+## Tech-Stacks-Used
 
 This is the list of all the teck stack and depenedencies used:-
 - `aws-sdk`: AWS SDK for Node.js which provides APIs for storage services like S3.
