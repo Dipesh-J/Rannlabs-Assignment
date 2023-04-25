@@ -1,7 +1,4 @@
 # Rannlabs-Assignment
-# Project Name
-
-[![Build Status](https://travis-ci.com/your_username/project_name.svg?branch=master)](https://travis-ci.com/your_username/project_name)
 
 ## Table of Contents
 
@@ -13,10 +10,22 @@
 
 1. Clone the repository:
 
-git clone (https://github.com/Dipesh-J/Rannlabs-Assignment.git)
+    git clone https://github.com/Dipesh-J/Rannlabs-Assignment.git
 
 
 2. Install the dependencies:
 
+    cd Rannlabs-Assignment
+    npm install
 
 
+3. Setup these environment variables:
+    - PORT
+    - MONGO_CONNECTION_STRING
+    - SECRET_KEY
+
+Note:- .env file is already included for testing purposes, so setting the environment variables is completely optional.
+
+
+4. Start the server:
+    npm start
