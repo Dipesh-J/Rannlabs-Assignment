@@ -20,7 +20,7 @@ const teacherSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+ // Hashing the password before storing it in the database
 teacherSchema.pre('save', async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);

@@ -1,5 +1,5 @@
 const validation = require("./validation");
-
+// Here, we are validating the requst bodies using the joi schema
 module.exports = {
   loginValidation: (req, res, next) => {
     const { error } = validation.loginValidation.validate(req.body);

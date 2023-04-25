@@ -9,10 +9,12 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const teacherRegister = async (req, res, next) => {
   try {
+    // Input data will come inside request body
     const data = req.body;
+    // Now destructuring our data
     const { email, mobile, password } = data;
 
-    // check the uniqueness of the email and mobile number
+       // Check the uniqueness of the details
     const uniquenessCheck = await teacherModel.findOne({
       $or: [{ email: email }, { mobile: mobile }],
     });
@@ -48,9 +50,10 @@ const teacherRegister = async (req, res, next) => {
 
 const teacherLogin = async (req, res, next) => {
   try {
+    // Taking credentials as input
     const credentials = req.body;
     const { mobile, password } = credentials;
-
+    // Checking if both the fields are present 
     if (Object.keys(credentials).length === 0) {
       return res.status(400).send({
         status: false,
@@ -67,6 +70,7 @@ const teacherLogin = async (req, res, next) => {
         .status(400)
         .send({ status: false, message: "password is mandatory" });
     }
+    // Finding the teacher in the database to check if he/she exists or not
     const teacherDetail = await teacherModel.findOne({ mobile: mobile });
     if (!teacherDetail) {
       return res.status(404).send({
@@ -74,6 +78,7 @@ const teacherLogin = async (req, res, next) => {
         message: "Teacher not found with this mobile.",
       });
     }
+    // Comparing the passwords using .compare method as password is hashed before getting stored in the Database
     const hashedPassword = teacherDetail.password;
     const passwordMatch = await bcrypt.compare(password, hashedPassword);
 
@@ -82,7 +87,7 @@ const teacherLogin = async (req, res, next) => {
         .status(400)
         .send({ status: false, message: "Incorrect Password" });
     }
-
+    // Signing JWT using ObjectId of teacher 
     const token = jwt.sign(
       {
         Id: teacherDetail._id,
@@ -106,28 +111,28 @@ const teacherLogin = async (req, res, next) => {
 //==================================================================UPLOAD ASSIGNMENT=======================================================//
 const uploadAssignment = async (req, res, next) => {
   try {
-    let { studentId } = req.body;
-    const assignmentFile = req.files;
-    studentId = JSON.parse(studentId);
+    let { studentId } = req.body; // Get studentId from request body
+    const assignmentFile = req.files; // Get assignment file from request files
+    studentId = JSON.parse(studentId); // Parse studentId from string to JSON
 
-    const assignment = await aws.uploadFile(assignmentFile[0]);
+    const assignment = await aws.uploadFile(assignmentFile[0]); // Upload assignment file to AWS S3 and get the file URL
 
-    console.log(assignment, typeof studentId);
-
+    // Loop through the studentId array and assign the assignment to each student
     for (let i = 0; i < studentId.length; i++) {
-      if (ObjectId.isValid(studentId[i])) {
+      if (ObjectId.isValid(studentId[i])) { // Check if the studentId is a valid ObjectId
         const allotedStudents = await studentModel.findOneAndUpdate(
-          { _id: studentId[i] },
-          { $push: { assignments: assignment } },
-          { new: true }
+          { _id: studentId[i] }, // Find the student with the given Id
+          { $push: { assignments: assignment } }, // Push the assignment URL to the student's assignments array
+          { new: true } // Return the updated student object
         );
         console.log(allotedStudents);
       }
     }
-    return res.status(200).send({ status: true, message: "Assignment Given" });
+    return res.status(200).send({ status: true, message: "Assignment Given" }); // Return a success response
   } catch (error) {
-    return next(error);
+    return next(error); // Handle any errors and pass to the error handling middleware
   }
 };
+
 
 module.exports = { teacherRegister, teacherLogin, uploadAssignment };

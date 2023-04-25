@@ -8,10 +8,12 @@ const bcrypt = require("bcrypt");
 
 const studentRegister = async (req, res, next) => {
   try {
+    // Input data will come inside request body
     const data = req.body;
-    const { firstName, lastName, schoolName, email, mobile, password } = data;
+    // Now destructuring our data
+    const { firstName, lastName, schoolName, email, mobile, password } = data; 
     const photo = req.files;
-    // check the uniqueness of the details
+    // Check the uniqueness of the details
     const uniquenessCheck = await studentModel.findOne({ email: email });
     if (uniquenessCheck) {
       if (uniquenessCheck.email === email) {
@@ -27,10 +29,10 @@ const studentRegister = async (req, res, next) => {
         });
       }
     }
-    // GENERATING THE AWS S3 LINK FOR THE PHOTO BEFORE SAVING IT IN THE DATABASE
+    // Generating the aws s3 link for the photo before saving it in the database
     const uploadedPhotoUrl = await aws.uploadFile(photo[0]);
     data.photo = uploadedPhotoUrl;
-    // REGISTERING STUDENTS
+    // Registering Students
     const registeredStudent = await studentModel.create(data);
     return res.status(201).send({
       status: true,
@@ -47,9 +49,10 @@ const studentRegister = async (req, res, next) => {
 
 const studentLogin = async (req, res, next) => {
   try {
+    // Taking credentials as input
     const credentials = req.body;
     const { mobile, password } = credentials;
-  
+    // Checking if both the fields are present 
     if (Object.keys(credentials).length === 0) {
       return res.status(400).send({
         status: false,
@@ -66,6 +69,7 @@ const studentLogin = async (req, res, next) => {
         .status(400)
         .send({ status: false, message: "password is mandatory" });
     }
+    // Finding the student in the database to check if he/she exists or not
     const studentDetail = await studentModel.findOne({ mobile: mobile });
     if (!studentDetail) {
       return res
@@ -75,6 +79,7 @@ const studentLogin = async (req, res, next) => {
           message: "Student not found with this Mobile No.",
         });
     }
+    // Comparing the passwords using .compare method as password is hashed before getting stored in the Database
     const hashedPassword = studentDetail.password;
     const passwordMatch = await bcrypt.compare(password, hashedPassword);
   
@@ -83,7 +88,7 @@ const studentLogin = async (req, res, next) => {
         .status(400)
         .send({ status: false, message: "Incorrect Password" });
     }
-  
+  // Signing JWT using ObjectId of student 
     const token = jwt.sign(
       {
         Id: studentDetail._id,
